@@ -404,6 +404,7 @@ section[id]{scroll-margin-top:84px;}
   padding:40px 24px 24px;
 }
 .logo-footer{color:#fff; margin:0 0 6px;}
+.footer-claim{font-size:.9rem; color:rgba(255,255,255,.7); margin:2px 0 10px; letter-spacing:.01em;}
 .footer-nap{font-size:.9rem; color:rgba(255,255,255,.65); margin:0;}
 .footer-legal{font-size:.78rem; line-height:1.6; color:rgba(255,255,255,.5); margin:14px 0 0; max-width:62ch;}
 .footer-nap a{color:rgba(255,255,255,.85); text-decoration:none;}
