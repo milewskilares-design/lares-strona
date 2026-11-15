@@ -209,6 +209,24 @@ p{margin:0 0 1em;}
 .price-item summary:focus-visible{outline:3px solid var(--blue-500); outline-offset:2px; border-radius:var(--radius);}
 .price-item-title{font-family:var(--font-head); font-weight:700; color:var(--navy-900); font-size:1.05rem;}
 .price-item-from{color:var(--blue-600); font-weight:700; font-size:.95rem; white-space:nowrap;}
+.price-item-meta{display:flex; align-items:baseline; gap:6px 16px; flex-wrap:wrap; justify-content:flex-end;}
+.price-item-min{color:var(--ink-muted); font-size:.85rem; white-space:nowrap;}
+.price-scope{color:var(--ink); font-size:.94rem; margin:0 0 14px; max-width:75ch;}
+.price-scope strong{color:var(--navy-900);}
+.vat-switch{
+  display:inline-flex; margin-top:28px; padding:4px; gap:4px;
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+}
+.vat-btn{
+  border:0; background:transparent; cursor:pointer; border-radius:999px;
+  padding:9px 18px; font-family:var(--font-head); font-weight:700; font-size:.92rem; color:var(--navy-900);
+}
+.vat-btn span{font-weight:500; color:var(--ink-muted); font-size:.82rem; margin-left:4px;}
+.vat-btn.is-active{background:var(--navy-900); color:#fff;}
+.vat-btn.is-active span{color:rgba(255,255,255,.72);}
+.vat-btn:focus-visible{outline:3px solid var(--blue-500); outline-offset:2px;}
+.vat-info{color:var(--ink-muted); font-size:.88rem; margin:10px 0 0;}
+.vat-switch + .vat-info + .price-list{margin-top:20px;}
 .price-item-body{padding:0 22px 22px;}
 .price-table-wrap{overflow-x:auto;}
 .price-table{width:100%; border-collapse:collapse; font-size:.95rem;}
@@ -230,6 +248,10 @@ p{margin:0 0 1em;}
 @media (max-width:560px){
   .price-item summary{padding:16px 46px 16px 16px;}
   .price-item-body{padding:0 16px 18px;}
+  .price-item-meta{justify-content:flex-start;}
+  .vat-switch{display:flex;}
+  .vat-btn{flex:1; padding:9px 10px; font-size:.86rem;}
+  .vat-btn span{display:block; margin-left:0; font-size:.74rem;}
   .price-table th, .price-table td{padding:9px 4px;}
   .price-table{font-size:.86rem;}
   .price-table thead th{font-size:.66rem; letter-spacing:0;}

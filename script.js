@@ -9,6 +9,44 @@
 document.getElementById('rok').textContent = new Date().getFullYear();
 
 
+// ---------- przełącznik cen brutto / netto w cenniku ----------
+//
+// Każda cena w cenniku ma w index.html dwie wartości:
+// data-brutto i data-netto. Przełącznik tylko podmienia tekst.
+// Wybór jest zapamiętywany w przeglądarce odwiedzającego.
+(function () {
+  const przyciski = document.querySelectorAll('.vat-btn');
+  if (!przyciski.length) return;
+  const ceny = document.querySelectorAll('.js-price');
+  const slowa = document.querySelectorAll('.js-vat-word');
+  const info = document.getElementById('vat-info');
+
+  function ustaw(tryb) {
+    ceny.forEach(function (el) { el.textContent = el.dataset[tryb]; });
+    slowa.forEach(function (el) { el.textContent = tryb; });
+    przyciski.forEach(function (b) {
+      const aktywny = b.dataset.vat === tryb;
+      b.classList.toggle('is-active', aktywny);
+      b.setAttribute('aria-pressed', aktywny ? 'true' : 'false');
+    });
+    if (info) {
+      info.textContent = tryb === 'brutto'
+        ? 'Podane ceny zawierają 23% VAT.'
+        : 'Podane ceny są cenami netto — należy doliczyć 23% VAT.';
+    }
+    try { localStorage.setItem('lares-ceny', tryb); } catch (e) { /* brak dostępu do pamięci — pomijamy */ }
+  }
+
+  przyciski.forEach(function (b) {
+    b.addEventListener('click', function () { ustaw(b.dataset.vat); });
+  });
+
+  let zapisany = null;
+  try { zapisany = localStorage.getItem('lares-ceny'); } catch (e) { /* jw. */ }
+  if (zapisany === 'netto') ustaw('netto');
+})();
+
+
 // ---------- kalkulator wstępnej wyceny ----------
 //
 // TODO: to są PRZYKŁADOWE stawki — podmień na własne, zanim
