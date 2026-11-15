@@ -9,6 +9,34 @@
 document.getElementById('rok').textContent = new Date().getFullYear();
 
 
+// ---------- menu na telefonie ----------
+//
+// Przycisk z trzema kreskami pokazuje i chowa nawigację na wąskich
+// ekranach. Menu zamyka się po wybraniu pozycji i po klawiszu Esc.
+(function () {
+  const naglowek = document.querySelector('.site-header');
+  const przycisk = document.querySelector('.nav-toggle');
+  const menu = document.getElementById('main-nav');
+  if (!naglowek || !przycisk || !menu) return;
+
+  function ustaw(otwarte) {
+    naglowek.classList.toggle('nav-open', otwarte);
+    przycisk.setAttribute('aria-expanded', otwarte ? 'true' : 'false');
+    przycisk.setAttribute('aria-label', otwarte ? 'Zamknij menu' : 'Otwórz menu');
+  }
+
+  przycisk.addEventListener('click', function () {
+    ustaw(!naglowek.classList.contains('nav-open'));
+  });
+  menu.addEventListener('click', function (e) {
+    if (e.target.closest('a')) ustaw(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && naglowek.classList.contains('nav-open')) { ustaw(false); przycisk.focus(); }
+  });
+})();
+
+
 // ---------- przełącznik cen brutto / netto w cenniku ----------
 //
 // Każda cena w cenniku ma w index.html dwie wartości:
