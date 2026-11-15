@@ -294,13 +294,12 @@ section[id]{scroll-margin-top:84px;}
 
 /* ---------- zaufali nam ---------- */
 .section-photo{margin:0; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-card);}
-.section-photo img{display:block; width:100%; height:100%; object-fit:cover;}
+.section-photo img{display:block; width:100%; height:auto; object-fit:cover;}
 .zaufali-intro{display:grid; grid-template-columns:1.25fr 1fr; gap:40px; align-items:center;}
-.zaufali-photo{max-height:300px;}
-.zaufali-photo img{object-position:center 72%;}
-@media (max-width:820px){ .zaufali-intro{grid-template-columns:1fr;} .zaufali-photo{max-height:240px;} }
-.gwarancje-photo{margin-top:28px; max-height:430px;}
-.gwarancje-photo img{object-position:center 30%;}
+.zaufali-photo img{aspect-ratio:4/3; object-position:center bottom;}
+@media (max-width:820px){ .zaufali-intro{grid-template-columns:1fr;} }
+.gwarancje-photo{margin-top:28px;}
+.gwarancje-photo img{aspect-ratio:4/3; object-position:center 90%;}
 
 .references-heading{
   font-family:var(--font-head); font-weight:700; font-size:1rem; color:var(--navy-900);
