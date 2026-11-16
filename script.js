@@ -77,49 +77,88 @@ document.getElementById('rok').textContent = new Date().getFullYear();
 
 // ---------- kalkulator wstępnej wyceny ----------
 //
-// TODO: to są PRZYKŁADOWE stawki — podmień na własne, zanim
-// opublikujesz stronę. To jedyne miejsce, w którym trzeba
-// zmienić ceny.
+// Wszystkie ceny kalkulatora są w tym jednym bloku — zmiana stawki
+// to zmiana liczby poniżej. Kwoty są netto; brutto liczone osobno.
 //
-// STAWKA = zł za m² za jedno sprzątanie (widełki min–max).
-const STAWKI = {
-  biuro:      { min: 2.5, max: 3.5 },   // biura i obiekty komercyjne
-  publiczny:  { min: 2.2, max: 3.0 },   // szkoły, urzędy, placówki publiczne
-  remont:     { min: 6.0, max: 9.0 },   // sprzątanie po remoncie/budowie
-  teren:      { min: 1.5, max: 2.5 },   // tereny zewnętrzne
-};
+// SPRZĄTANIE STAŁE (raz w tygodniu / kilka razy / codziennie)
+// liczymy jak w kalkulacjach ofertowych LARES:
+//   godziny w miesiącu = (metraż ÷ wydajność) × liczba wizyt,
+//   ale nie mniej niż minimalny czas wizyty,
+//   cena = godziny × stawka za roboczogodzinę (widełki od–do).
+// Stawka obejmuje pracownika, chemię, sprzęt, koordynację i marżę.
+const STAWKA_GODZINOWA = { min: 48, max: 60 };   // zł netto za roboczogodzinę
 
-// Ile sprzątań w miesiącu odpowiada danej częstotliwości.
-const WIZYTY_MIESIECZNIE = {
-  jednorazowo: 1,
-  tydzien: 4,
-  kilka: 12,
-  codziennie: 22,
+// Wydajność: ile m² sprząta jedna osoba w godzinę przy danej częstotliwości.
+// Im częściej sprzątamy, tym mniej brudu i szybciej idzie praca.
+const WYDAJNOSC = {
+  biuro:     { tydzien: 130, kilka: 180, codziennie: 220 },
+  publiczny: { tydzien: 130, kilka: 180, codziennie: 220 },
+  teren:     { tydzien: 500, kilka: 600, codziennie: 700 },
 };
+const PREMIA_DUZA_POWIERZCHNIA = 1.2;   // od 1000 m² wydajność +20% (większa skala)
+const MIN_GODZIN_NA_WIZYTE = { tydzien: 2, kilka: 1.5, codziennie: 1 };
+const WIZYTY_MIESIECZNIE = { tydzien: 4.33, kilka: 13, codziennie: 21.7 };
+
+// SPRZĄTANIE JEDNORAZOWE — według cennika na stronie (zł netto za m², progi metrażu).
+// Widełki: od ceny z cennika do +30% (mocniejsze zabrudzenia, trudny dostęp).
+const JEDNORAZOWO = {
+  biuro:     { progi: [[100, 8], [300, 6], [1000, 5], [Infinity, 4]],        minimum: 400 },
+  publiczny: { progi: [[100, 8], [300, 6], [1000, 5], [Infinity, 4]],        minimum: 400 },
+  remont:    { progi: [[100, 17], [300, 14.5], [1000, 12], [Infinity, 10.5]], minimum: 900 },
+  teren:     { progi: [[Infinity, 1.2]],                                     minimum: 300 },
+};
+const NARZUT_JEDNORAZOWO_MAX = 1.3;
+
+// VAT: 23% dla usług w budynkach, 8% dla terenów zewnętrznych.
+const VAT = { biuro: 0.23, publiczny: 0.23, remont: 0.23, teren: 0.08 };
 
 const calcForm = document.getElementById('calc-form');
 const calcResult = document.getElementById('calc-result');
+const calcType = document.getElementById('calc-type');
+const calcFreq = document.getElementById('calc-freq');
+
+// Po remoncie sprzątamy tylko jednorazowo — blokujemy wybór częstotliwości.
+function ustawCzestotliwosc() {
+  const remont = calcType.value === 'remont';
+  if (remont) calcFreq.value = 'jednorazowo';
+  calcFreq.disabled = remont;
+}
+calcType.addEventListener('change', ustawCzestotliwosc);
+ustawCzestotliwosc();
+
+function zaokraglij(kwota) { return Math.round(kwota / 10) * 10; }
+function zl(kwota) { return zaokraglij(kwota).toLocaleString('pl-PL'); }
 
 calcForm.addEventListener('submit', function (e) {
   e.preventDefault();
 
-  const typ = document.getElementById('calc-type').value;
+  const typ = calcType.value;
   const metraz = Number(document.getElementById('calc-area').value) || 0;
-  const czestotliwosc = document.getElementById('calc-freq').value;
+  const czestotliwosc = calcFreq.value;
+  let min, max, godziny = null;
 
-  const stawka = STAWKI[typ];
-  const wizyty = WIZYTY_MIESIECZNIE[czestotliwosc];
+  if (czestotliwosc === 'jednorazowo') {
+    const c = JEDNORAZOWO[typ];
+    const stawka = c.progi.find(function (p) { return metraz <= p[0]; })[1];
+    min = Math.max(metraz * stawka, c.minimum);
+    max = Math.max(metraz * stawka * NARZUT_JEDNORAZOWO_MAX, c.minimum * NARZUT_JEDNORAZOWO_MAX);
+  } else {
+    let wydajnosc = WYDAJNOSC[typ][czestotliwosc];
+    if (metraz >= 1000) wydajnosc *= PREMIA_DUZA_POWIERZCHNIA;
+    const naWizyte = Math.max(metraz / wydajnosc, MIN_GODZIN_NA_WIZYTE[czestotliwosc]);
+    godziny = naWizyte * WIZYTY_MIESIECZNIE[czestotliwosc];
+    min = godziny * STAWKA_GODZINOWA.min;
+    max = godziny * STAWKA_GODZINOWA.max;
+  }
 
-  const kosztJednegoSprzataniaMin = metraz * stawka.min;
-  const kosztJednegoSprzataniaMax = metraz * stawka.max;
-
-  const razem_min = Math.round(kosztJednegoSprzataniaMin * wizyty);
-  const razem_max = Math.round(kosztJednegoSprzataniaMax * wizyty);
-
-  document.getElementById('calc-min').textContent = razem_min.toLocaleString('pl-PL');
-  document.getElementById('calc-max').textContent = razem_max.toLocaleString('pl-PL');
+  const vat = VAT[typ];
+  document.getElementById('calc-min').textContent = zl(min);
+  document.getElementById('calc-max').textContent = zl(max);
   document.getElementById('calc-unit').textContent =
-    czestotliwosc === 'jednorazowo' ? ' (jednorazowo)' : ' / miesiąc';
+    czestotliwosc === 'jednorazowo' ? ' netto (jednorazowo)' : ' netto / miesiąc';
+  document.getElementById('calc-brutto').textContent =
+    'Brutto: ' + zl(min * (1 + vat)) + ' – ' + zl(max * (1 + vat)) + ' zł (VAT ' + Math.round(vat * 100) + '%)' +
+    (godziny ? ' · szacowany nakład pracy: ok. ' + Math.round(godziny) + ' roboczogodzin w miesiącu' : '');
 
   calcResult.hidden = false;
   calcResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
