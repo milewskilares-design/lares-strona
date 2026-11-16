@@ -126,6 +126,24 @@ calcForm.addEventListener('submit', function (e) {
 });
 
 
+// ---------- mapa Google po kliknięciu ----------
+//
+// Ramka z mapą Google ładuje się dopiero, gdy odwiedzający kliknie
+// „Pokaż mapę”. Dzięki temu bez jego decyzji przeglądarka nie łączy
+// się z Google i nie dostaje plików cookie Google.
+(function () {
+  const miejsce = document.querySelector('.map-placeholder');
+  if (!miejsce) return;
+  miejsce.querySelector('.map-load').addEventListener('click', function () {
+    const ramka = document.createElement('iframe');
+    ramka.title = 'Mapa lokalizacji LARES';
+    ramka.referrerPolicy = 'no-referrer-when-downgrade';
+    ramka.src = miejsce.dataset.mapSrc;
+    miejsce.replaceWith(ramka);
+  });
+})();
+
+
 // ---------- formularz kontaktowy ----------
 //
 // Wysyłka w tle przez Web3Forms (web3forms.com) — bez otwierania

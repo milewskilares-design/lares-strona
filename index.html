@@ -22,9 +22,9 @@
 <meta property="og:image" content="https://larespro.pl/images/og-cover.jpg">
 
 <link rel="icon" href="images/favicon.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/manrope-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="style.css">
 
 <!-- ============================================================
@@ -494,9 +494,13 @@
           <div><dt>Godziny pracy</dt><dd>Pon–Pt: 8:00–16:00</dd></div>
         </dl>
         <div class="map-embed">
-          <!-- TODO: podmień adres w linku na swój, żeby mapa pokazywała właściwą lokalizację -->
-          <iframe title="Mapa lokalizacji LARES" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps?q=Marsza%C5%82kowska+58%2C+00-545+Warszawa&output=embed"></iframe>
+          <!-- Mapa Google ładuje się dopiero po kliknięciu — wcześniej przeglądarka nie łączy się z Google. -->
+          <div class="map-placeholder" data-map-src="https://www.google.com/maps?q=Marsza%C5%82kowska+58%2C+00-545+Warszawa&amp;output=embed">
+            <p class="map-placeholder-title">Marszałkowska 58, 00-545 Warszawa</p>
+            <p class="map-placeholder-note">Mapa pochodzi z Google Maps. Po jej wyświetleniu Google może zapisać pliki cookie i otrzyma Twój adres IP.</p>
+            <button type="button" class="btn btn-ghost map-load">Pokaż mapę</button>
+            <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Marsza%C5%82kowska+58%2C+00-545+Warszawa" target="_blank" rel="noopener">Otwórz w Mapach Google</a>
+          </div>
         </div>
       </div>
 
@@ -514,6 +518,7 @@
           <textarea id="c-message" name="message" rows="4" required></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Wyślij zapytanie</button>
+        <p class="form-rodo">Administratorem Twoich danych jest LARES Sp. z o.o., ul. Marszałkowska 58, 00-545 Warszawa. Dane z formularza wykorzystamy wyłącznie do odpowiedzi na zapytanie i przygotowania oferty. Szczegóły, w tym Twoje prawa, znajdziesz w <a href="polityka-prywatnosci.html">polityce prywatności</a>.</p>
       </form>
     </div>
   </section>
@@ -538,7 +543,7 @@
     </nav>
   </div>
   <div class="wrap footer-bottom">
-    <p>© <span id="rok"></span> LARES. Wszelkie prawa zastrzeżone.</p>
+    <p>© <span id="rok"></span> LARES Sp. z o.o. Wszelkie prawa zastrzeżone. · <a href="polityka-prywatnosci.html">Polityka prywatności</a></p>
   </div>
 </footer>
 
