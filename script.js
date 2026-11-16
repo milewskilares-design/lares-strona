@@ -6,7 +6,10 @@
    ========================================================= */
 
 // ---------- rok w stopce ----------
-document.getElementById('rok').textContent = new Date().getFullYear();
+(function () {
+  const rok = document.getElementById('rok');
+  if (rok) rok.textContent = new Date().getFullYear();
+})();
 
 
 // ---------- menu na telefonie ----------
@@ -112,6 +115,8 @@ const NARZUT_JEDNORAZOWO_MAX = 1.3;
 // VAT: 23% dla usług w budynkach, 8% dla terenów zewnętrznych.
 const VAT = { biuro: 0.23, publiczny: 0.23, remont: 0.23, teren: 0.08 };
 
+// Kalkulator jest tylko na stronie głównej — na podstronach ten blok nic nie robi.
+if (document.getElementById('calc-form')) {
 const calcForm = document.getElementById('calc-form');
 const calcResult = document.getElementById('calc-result');
 const calcType = document.getElementById('calc-type');
@@ -163,6 +168,7 @@ calcForm.addEventListener('submit', function (e) {
   calcResult.hidden = false;
   calcResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
+}
 
 
 // ---------- mapa Google po kliknięciu ----------
