@@ -511,3 +511,5 @@ section[id]{scroll-margin-top:84px;}
 @media (max-width:760px){ .guarantee-list-2{grid-template-columns:minmax(0,1fr);} }
 .price-table .td-text{text-align:left; white-space:normal; font-weight:500; color:var(--ink);}
 .price-table.price-table-text thead th{text-align:left; white-space:normal;}
+
+.footer-adres-info{display:inline-block; margin-top:4px; font-size:.84rem; opacity:.75;}
