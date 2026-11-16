@@ -60,10 +60,13 @@
       b.classList.toggle('is-active', aktywny);
       b.setAttribute('aria-pressed', aktywny ? 'true' : 'false');
     });
+    // Tekst pod przełącznikiem. Strony o innej stawce VAT (tereny
+    // zewnętrzne — 8%) podają własne zdania w data-info-brutto
+    // i data-info-netto na elemencie #vat-info.
     if (info) {
       info.textContent = tryb === 'brutto'
-        ? 'Podane ceny zawierają 23% VAT.'
-        : 'Podane ceny są cenami netto — należy doliczyć 23% VAT.';
+        ? (info.dataset.infoBrutto || 'Podane ceny zawierają 23% VAT.')
+        : (info.dataset.infoNetto || 'Podane ceny są cenami netto — należy doliczyć 23% VAT.');
     }
     try { localStorage.setItem('lares-ceny', tryb); } catch (e) { /* brak dostępu do pamięci — pomijamy */ }
   }
@@ -108,7 +111,7 @@ const JEDNORAZOWO = {
   biuro:     { progi: [[100, 8], [300, 6], [1000, 5], [Infinity, 4]],        minimum: 400 },
   publiczny: { progi: [[100, 8], [300, 6], [1000, 5], [Infinity, 4]],        minimum: 400 },
   remont:    { progi: [[100, 17], [300, 14.5], [1000, 12], [Infinity, 10.5]], minimum: 900 },
-  teren:     { progi: [[Infinity, 1.2]],                                     minimum: 300 },
+  teren:     { progi: [[Infinity, 1.5]],                                     minimum: 300 },
 };
 const NARZUT_JEDNORAZOWO_MAX = 1.3;
 
